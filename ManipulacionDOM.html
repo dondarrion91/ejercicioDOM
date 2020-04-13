@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Ejercicio manipulacion DOM</title> 
+		
+	</head>
+	<!-- hacer el codigo necesario para que funcione como una galeria de imagenes. -->
+	<body>
+        
+        <div style="width: 50%; float: left;">
+            <button type="button" onclick="atras()">Atras</button>
+            
+            <span id="diapositivas">
+                <img src="4.png" alt="Diapositiva 1" height="100" width="200">
+                <img src="5.jpg" alt="Diapositiva 2" height="100" width="200">
+                <img src="6.jpg" alt="Diapositiva 3" height="100" width="200">
+            </span>
+
+            <button type="button" onclick="adelante()">Adelante</button>
+            <p></p>
+
+            <!-- bloque de comentario....-->
+            <input type="text" id="txtComentario" placeholder="ingrese su comentario" maxlength="300">
+            <button type="button" id="btnComentario">Agregar comentario</button>
+            <ul id="lstComentario">
+                <!-- contenido dinamico -->
+            </ul>
+        </div>
+        <div style="width: 50%; float:right;">
+            <!-- consigna....-->
+            <h3>Etapa 1: </h3>
+            <p>
+                
+                Agregar el codigo js necesario para que cuando el usuario ingrese un comentario en el cuadro de texto
+                y presione el boton agregar comentario, los comentarios se vayan agregando en el ul que tiene como id 'lstComentario'. 
+                <br>
+                <br>
+                
+                <strong>Si el boton es presionado, y la caja de texto esta vacia</strong>, debe decorarse la caja de texto con un borde rojo e indicar 
+                de alguna manera que debe ingresar un texto como comentario.
+                <br>
+                <br>
+
+                Si la caja de texto tiene un contenido, <strong>luego de presionar el boton agregar comentario </strong>, se debe borrar el texto, si sus 
+                bordes estaban decorados con algun color, se debe quitar el color, y el texto ingresado en la caja de texto se debe agregar 
+                al listado de 'lstComentario'.
+                <br>
+                <br>
+                <strong>Si en la caja de texto se presiona la tecla enter</strong>, el comportamiento debe ser igual a que si se presiona el boton 
+                agregar comentario
+                
+
+                Cada comentario debe tener un boton Eliminar, que permita eliminarlos.
+            
+            
+            </p>
+            <h3>Etapa 2:</h3>
+            <p>
+                En la primera etapa los comentarios eran idependiente de las imagenes. En esta etapa, <strong> los comentarios deben quedar asociados
+                a cada imagen.</strong>
+            </p>
+            
+        </div>
+
+        <script>
+
+
+            // contador
+            let contador = 0;
+
+            // traemos el contenedor
+            let contenedor = document.getElementById("diapositivas");
+
+            // guardamos copia de imagenes
+            let imagenes = contenedor.querySelectorAll("img");
+
+            // removemos las imagenes 
+            for(let i = 1; i < imagenes.length; i++) {
+
+                // remover elementos.
+                contenedor.removeChild(imagenes[i]);
+            }
+
+            function adelante() {
+
+                //  posicion previa
+                let contadorPrevio = contador;
+
+                // incrementar
+                contador ++;
+
+                // chequeo que no salga de los limites del array
+                if(contador >= imagenes.length) {
+
+                    contador = 0;
+                }
+
+                // remuevo el anterior y agrego el siguiente.
+                contenedor.removeChild(imagenes[contadorPrevio]);
+                contenedor.appendChild(imagenes[contador]);
+
+                img = document.getElementsByTagName("img")[0];                                  
+                fotoCual(); 
+                txtComentario.style.borderColor = "#fff";                        
+            }
+
+            function atras() {
+
+                //  posicion previa
+                let contadorPrevio = contador;
+
+                // decrementar
+                contador --;
+
+                // chequeo que no salga de los limites del array
+                if(contador < 0) {
+
+                    contador = imagenes.length - 1;
+                }
+
+                // remuevo el anterior y agrego el siguiente.
+                contenedor.removeChild(imagenes[contadorPrevio]);
+                contenedor.appendChild(imagenes[contador]);
+
+                
+                img = document.getElementsByTagName("img")[0];                                                     
+                fotoCual(); // llama a la funcion que agrega y crea elementos despues de cargar en img la imagen en vista
+                txtComentario.style.borderColor = "#fff";        
+            }
+
+            // Codigo del ejercicio
+
+            //-----------------------
+            //-----------------------
+            //-----------------------
+            //-----------------------
+
+
+            let img = document.getElementsByTagName("img")[0];
+            
+            if(!localStorage.getItem("array1") || !localStorage.getItem("array2") || !localStorage.getItem("array3")){
+                localStorage.setItem("array1",JSON.stringify([]));
+                localStorage.setItem("array2",JSON.stringify([]));
+                localStorage.setItem("array3",JSON.stringify([]));
+            }            
+
+
+            let array1 = JSON.parse(localStorage.getItem("array1"));
+            let array2 = JSON.parse(localStorage.getItem("array2"));
+            let array3 = JSON.parse(localStorage.getItem("array3"));
+
+
+            let lstComentario = document.getElementById("lstComentario"); // contenedor ul
+            
+            function agregarLi(array){            
+                let txtComentario = document.getElementById("txtComentario");  // elemento input text                
+                if(txtComentario.value){          // si hay contenido en el input                           
+                    array.push(txtComentario.value);                                                           
+                    txtComentario.value = "";          
+                    txtComentario.style.borderColor = "#fff";          
+                }else if(txtComentario.value == ""){         // si el input esta vacio                     
+                    txtComentario.style.borderColor = "red";
+                }              
+                                               
+            }
+            
+            let botonEliminar = document.querySelectorAll("#lstComentario button"); // array con los botones de eliminar    
+            
+            function renderList(array){        // esta funcion crea elementos de lista y los agrega al contenedor ul
+                lstComentario.innerHTML = "";
+                array.forEach(elem => {
+                    let li = document.createElement("li");
+                    let button = document.createElement("button");
+                    button.innerHTML = "Eliminar"
+                    li.innerHTML = elem;
+                    li.appendChild(button); 
+                    lstComentario.appendChild(li);
+                });
+
+                let botonEliminar = document.querySelectorAll("#lstComentario button"); // elimina el array y de la lista ul
+                botonEliminar.forEach(elem => {                    
+                    elem.addEventListener("click",() => {
+                        let targetElement = elem.parentNode.innerHTML.replace("<button>Eliminar</button>","");
+                        array.splice(array.indexOf(targetElement),1);
+                        lstComentario.removeChild(elem.parentNode);   
+                        localStorage.setItem("array1",JSON.stringify(array1));
+                        localStorage.setItem("array2",JSON.stringify(array2));
+                        localStorage.setItem("array3",JSON.stringify(array3));                            
+                    })                
+                });
+
+                
+            }
+            
+            function fotoCual(){  // funcion que llama a las funciones de agreagr y crear dependiendo que foto este visible
+                let txtComentario = document.getElementById("txtComentario"); 
+                console.log(txtComentario.value) 
+                switch(img.alt){  // accede al atributo alt del elemento imagen
+                    case "Diapositiva 1":
+                        console.log(1)
+                        agregarLi(array1);                         
+                        renderList(array1);
+                        break;
+                    case "Diapositiva 2":
+                        console.log(2)                        
+                        agregarLi(array2);                         
+                        renderList(array2);
+                        break;
+                    case "Diapositiva 3":
+                        console.log(3)
+                        agregarLi(array3);                         
+                        renderList(array3);
+                        break;                
+                }
+            }
+
+            window.addEventListener("load",() => { // cuando se carga y refresca la pagina
+                fotoCual(); 
+                txtComentario.style.borderColor = "#fff";          
+            })
+
+            btnComentario.addEventListener("click",() => {          // cuando se ahce click al boton agregar         
+                fotoCual();  
+                localStorage.setItem("array1",JSON.stringify(array1));
+                localStorage.setItem("array2",JSON.stringify(array2));
+                localStorage.setItem("array3",JSON.stringify(array3));                      
+            });
+    
+            window.addEventListener("keyup",e => {        // evento tecla enter             
+                    if(e.keyCode === 13){   
+                        fotoCual();  
+                        localStorage.setItem("array1",JSON.stringify(array1));
+                        localStorage.setItem("array2",JSON.stringify(array2));
+                        localStorage.setItem("array3",JSON.stringify(array3));                                                
+                    } 
+            }) 
+                                                           
+        </script>
+
+
+	</body>
+</html>
